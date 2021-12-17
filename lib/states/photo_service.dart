@@ -49,6 +49,7 @@ class _PhotoServiceState extends State<PhotoService> {
     super.initState();
     // textEditingController.text = '2107079712305Q';
     textEditingController.text = '2109039PTG9VAT';
+    // textEditingController.text = '211216A228XAFJ';
 
     var images = listImages.toString();
     print('images ==> $images');
@@ -135,10 +136,10 @@ class _PhotoServiceState extends State<PhotoService> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          buildImage(0),
-          buildImage(1),
-          buildImage(2),
-          buildImage(3),
+          buildImage(0, shopeeDocnoModels[0].PACKIMG1),
+          buildImage(1, shopeeDocnoModels[0].PACKIMG2),
+          buildImage(2, shopeeDocnoModels[0].PACKIMG3),
+          buildImage(3, shopeeDocnoModels[0].PACKIMG4),
         ],
       ),
     );
@@ -201,6 +202,25 @@ class _PhotoServiceState extends State<PhotoService> {
                               print('@@ value ==> $value');
                               Navigator.pop(context);
                               Navigator.pop(context);
+
+                              // process UPdate Database
+                              var keys = <String>[
+                                'PACKIMG1',
+                                'PACKIMG2',
+                                'PACKIMG3',
+                                'PACKIMG4',
+                              ];
+
+                              var picnum = <int>[
+                                1,
+                                2,
+                                3,
+                                4,
+                              ];
+
+                              Map<String, dynamic> map = {};
+                              map[keys[index]] = value.toString();
+                              print('@@ picnum ==> ${picnum[index]} map ==> $map');
                             });
                           } catch (e) {
                             print('@@ error =>$e');
@@ -249,7 +269,8 @@ class _PhotoServiceState extends State<PhotoService> {
     );
   }
 
-  Container buildImage(int index) {
+  Container buildImage(int index, String packimg) {
+    print('@@ image$index ==>>> $packimg');
     return Container(
       width: 48,
       height: 48,
