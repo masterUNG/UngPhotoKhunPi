@@ -45,14 +45,21 @@ class _PhotoServiceState extends State<PhotoService> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // textEditingController.text = '2107079712305Q';
-    textEditingController.text = '2109039PTG9VAT';
+    textEditingController.text = '2105109TRN8CH5';
     // textEditingController.text = '211216A228XAFJ';
 
     var images = listImages.toString();
     print('images ==> $images');
+
+    setUpFiles();
+  }
+
+  void setUpFiles() {
+    if (files.isNotEmpty) {
+      files.clear();
+    }
 
     for (var i = 0; i < 4; i++) {
       files.add(null);
@@ -198,7 +205,9 @@ class _PhotoServiceState extends State<PhotoService> {
 
                             String urlAPi =
                                 'http://210.86.171.110:89/webapi3/api/docfile';
-                            await Dio().post(urlAPi, data: data).then((value) {
+                            await Dio()
+                                .post(urlAPi, data: data)
+                                .then((value) async {
                               print('@@ value ==> $value');
                               Navigator.pop(context);
                               Navigator.pop(context);
@@ -211,7 +220,7 @@ class _PhotoServiceState extends State<PhotoService> {
                                 'PACKIMG4',
                               ];
 
-                              var picnum = <int>[
+                              var picnums = <int>[
                                 1,
                                 2,
                                 3,
@@ -220,7 +229,21 @@ class _PhotoServiceState extends State<PhotoService> {
 
                               Map<String, dynamic> map = {};
                               map[keys[index]] = value.toString();
-                              print('@@ picnum ==> ${picnum[index]} map ==> $map');
+                              print(
+                                  '@@ picnum ==> ${picnums[index]} map ==> $map');
+
+                              String docno = textEditingController.text;
+                              int picnum = picnums[index];
+                              String picname = nameFile;
+
+                              String apiUpdateImagePackage =
+                                  'http://210.86.171.110:89/webapi3/api/shopeepic?docno=$docno&picnum=$picnum&picname=$picname';
+                              await Dio()
+                                  .get(apiUpdateImagePackage)
+                                  .then((value) {
+                                print('@@ Success Update image $picnum');
+                                processSearch(docno);
+                              });
                             });
                           } catch (e) {
                             print('@@ error =>$e');
@@ -279,12 +302,14 @@ class _PhotoServiceState extends State<PhotoService> {
           print('#### index => $index');
           imageDialog(index);
         },
-        child: files[index] == null
-            ? ShowImage(path: MyConstant.icon)
-            : Image.file(
-                files[index]!,
-                fit: BoxFit.cover,
-              ),
+        child: packimg.isNotEmpty
+            ? Image.network('${MyConstant.domainImage}$packimg', fit: BoxFit.cover,)
+            : files[index] == null
+                ? ShowImage(path: MyConstant.icon)
+                : Image.file(
+                    files[index]!,
+                    fit: BoxFit.cover,
+                  ),
       ),
     );
   }
@@ -346,6 +371,8 @@ class _PhotoServiceState extends State<PhotoService> {
   }
 
   Future<Null> processSearch(String search) async {
+    setUpFiles();
+
     if (shopeeDocnoModels.length != 0) {
       shopeeDocnoModels.clear();
       widgets.clear();

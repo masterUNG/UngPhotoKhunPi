@@ -8,6 +8,7 @@ class MyConstant {
   static String image1 = 'images/image1.png';
   static String image2 = 'images/image2.png';
   static String icon = 'images/icon.png';
+  static String domainImage = 'http://210.86.171.110:89/shopeepic/';
 
   // for Color
   static Color primary = Color(0xfff57c00);
@@ -39,7 +40,7 @@ class MyConstant {
         color: dark,
       );
 
-      TextStyle h3PrimaryStyle() => TextStyle(
+  TextStyle h3PrimaryStyle() => TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.bold,
         color: primary,
