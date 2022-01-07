@@ -57,9 +57,12 @@ class _PhotoServiceState extends State<PhotoService> {
   }
 
   void setUpFiles() {
-    if (files.isNotEmpty) {
-      files.clear();
-    }
+    // if (files.isNotEmpty) {
+    //   files.clear();
+    // }
+
+    files.clear();
+    widgets.clear();
 
     for (var i = 0; i < 4; i++) {
       files.add(null);
@@ -162,10 +165,11 @@ class _PhotoServiceState extends State<PhotoService> {
       setState(() {
         files[index] = File(result!.path);
       });
+      // processUploadImage(index);
     } catch (e) {}
   }
 
-  Future<Null> imageDialog(int index) async {
+  Future<Null> imageDialog(int index, String packimg) async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -178,7 +182,9 @@ class _PhotoServiceState extends State<PhotoService> {
           subtitle: ShowTitle(title: 'กรุณา เลือกแหล่งกำเหนิดภาพ ด้วยคะ'),
         ),
         content: files[index] == null
-            ? SizedBox()
+            ? packimg.isNotEmpty
+                ? Image.network('${MyConstant.domainImage}$packimg')
+                : SizedBox()
             : Stack(
                 children: [
                   Image.file(files[index]!),
@@ -188,71 +194,9 @@ class _PhotoServiceState extends State<PhotoService> {
                     child: Card(
                       color: Colors.white.withOpacity(0.5),
                       child: IconButton(
-                        onPressed: () async {
-                          // Navigator.pop(context);
-
-                          MyDialog().processDialog(context);
-
-                          String nameFile =
-                              '${textEditingController.text}_${index + 1}.jpg';
-
-                          try {
-                            Map<String, dynamic> map = {};
-                            map['file'] = await MultipartFile.fromFile(
-                                files[index]!.path,
-                                filename: nameFile);
-                            FormData data = FormData.fromMap(map);
-
-                            String urlAPi =
-                                'http://210.86.171.110:89/webapi3/api/docfile';
-                            await Dio()
-                                .post(urlAPi, data: data)
-                                .then((value) async {
-                              print('@@ value ==> $value');
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-
-                              // process UPdate Database
-                              var keys = <String>[
-                                'PACKIMG1',
-                                'PACKIMG2',
-                                'PACKIMG3',
-                                'PACKIMG4',
-                              ];
-
-                              var picnums = <int>[
-                                1,
-                                2,
-                                3,
-                                4,
-                              ];
-
-                              Map<String, dynamic> map = {};
-                              map[keys[index]] = value.toString();
-                              print(
-                                  '@@ picnum ==> ${picnums[index]} map ==> $map');
-
-                              String docno = textEditingController.text;
-                              int picnum = picnums[index];
-                              String picname = nameFile;
-
-                              String apiUpdateImagePackage =
-                                  'http://210.86.171.110:89/webapi3/api/shopeepic?docno=$docno&picnum=$picnum&picname=$picname';
-                              await Dio()
-                                  .get(apiUpdateImagePackage)
-                                  .then((value) {
-                                print('@@ Success Update image $picnum');
-                                processSearch(docno);
-                              });
-                            });
-                          } catch (e) {
-                            print('@@ error =>$e');
-                            Navigator.pop(context);
-                            MyDialog().normalDialog(context,
-                                title: 'Have Problem ?',
-                                message: 'Wait few minus Please try again');
-                          }
-                        },
+                        onPressed: () {
+                          processUploadImage(index);
+                        }, // end Func
                         icon: Icon(
                           Icons.cloud_upload_outlined,
                           size: 36,
@@ -292,9 +236,62 @@ class _PhotoServiceState extends State<PhotoService> {
     );
   }
 
+  Future<void> processUploadImage(int index) async {
+    // Navigator.pop(context);
 
-    
-    //ffff
+    MyDialog().processDialog(context);
+
+    String nameFile = '${textEditingController.text}_${index + 1}.jpg';
+
+    try {
+      Map<String, dynamic> map = {};
+      map['file'] =
+          await MultipartFile.fromFile(files[index]!.path, filename: nameFile);
+      FormData data = FormData.fromMap(map);
+
+      String urlAPi = 'http://210.86.171.110:89/webapi3/api/docfile';
+      await Dio().post(urlAPi, data: data).then((value) async {
+        print('@@ value ==> $value');
+        Navigator.pop(context);
+        Navigator.pop(context);
+
+        // process UPdate Database
+        var keys = <String>[
+          'PACKIMG1',
+          'PACKIMG2',
+          'PACKIMG3',
+          'PACKIMG4',
+        ];
+
+        var picnums = <int>[
+          1,
+          2,
+          3,
+          4,
+        ];
+
+        Map<String, dynamic> map = {};
+        map[keys[index]] = value.toString();
+        print('@@ picnum ==> ${picnums[index]} map ==> $map');
+
+        String docno = textEditingController.text;
+        int picnum = picnums[index];
+        String picname = nameFile;
+
+        String apiUpdateImagePackage =
+            'http://210.86.171.110:89/webapi3/api/shopeepic?docno=$docno&picnum=$picnum&picname=$picname';
+        await Dio().get(apiUpdateImagePackage).then((value) {
+          print('@@ Success Update image $picnum');
+          processSearch(docno);
+        });
+      });
+    } catch (e) {
+      print('@@ error =>$e');
+      Navigator.pop(context);
+      MyDialog().normalDialog(context,
+          title: 'Have Problem ?', message: 'Wait few minus Please try again');
+    }
+  }
 
   Container buildImage(int index, String packimg) {
     print('@@ image$index ==>>> $packimg');
@@ -304,10 +301,13 @@ class _PhotoServiceState extends State<PhotoService> {
       child: GestureDetector(
         onTap: () {
           print('#### index => $index');
-          imageDialog(index);
+          imageDialog(index, packimg);
         },
         child: packimg.isNotEmpty
-            ? Image.network('${MyConstant.domainImage}$packimg', fit: BoxFit.cover,)
+            ? Image.network(
+                '${MyConstant.domainImage}$packimg',
+                fit: BoxFit.cover,
+              )
             : files[index] == null
                 ? ShowImage(path: MyConstant.icon)
                 : Image.file(
