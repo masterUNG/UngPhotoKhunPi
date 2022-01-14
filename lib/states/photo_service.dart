@@ -143,10 +143,14 @@ class _PhotoServiceState extends State<PhotoService> {
   }
 
   Widget newControlImage() => Row(
-    children: [
-      ButtonTakePhoto(),
-    ],
-  );
+        children: [
+          ButtonTakePhoto(
+            tapFunc: () {
+              print('You Click');
+            },
+          ),
+        ],
+      );
 
   Padding controlImage() {
     return Padding(
