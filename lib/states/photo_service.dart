@@ -8,6 +8,7 @@ import 'package:qrscan/qrscan.dart';
 import 'package:ungphoto/models/shopee_docno_model.dart';
 import 'package:ungphoto/utility/my_constant.dart';
 import 'package:ungphoto/utility/my_dialog.dart';
+import 'package:ungphoto/widgets/button_take_photo.dart';
 import 'package:ungphoto/widgets/show_image.dart';
 import 'package:ungphoto/widgets/show_title.dart';
 
@@ -129,7 +130,8 @@ class _PhotoServiceState extends State<PhotoService> {
           // buildHeadTitle('รายการสั่งซื้อ'),
           buildListOrder(),
           buildHeadTitle('รูปถ่าย Package'),
-          controlImage(),
+          // controlImage(),  นี่คือตัวเก่าที่ ต้อง Alert Dialot ก่อนอัพไป Server
+          newControlImage(),
           buildRow(
               'น้ำหนักสินค้า :',
               shopeeDocnoModels.length == 0
@@ -139,6 +141,12 @@ class _PhotoServiceState extends State<PhotoService> {
       ),
     );
   }
+
+  Widget newControlImage() => Row(
+    children: [
+      ButtonTakePhoto(),
+    ],
+  );
 
   Padding controlImage() {
     return Padding(
