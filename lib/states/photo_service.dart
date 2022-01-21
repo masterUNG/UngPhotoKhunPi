@@ -143,11 +143,27 @@ class _PhotoServiceState extends State<PhotoService> {
   }
 
   Widget newControlImage() => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           ButtonTakePhoto(
             tapFunc: () {
-              print('You Click');
-            },
+              print('You Click1 ==>> ${shopeeDocnoModels[0].PACKIMG1}');
+            }, urlPathImage: shopeeDocnoModels[0].PACKIMG1,
+          ),
+          ButtonTakePhoto(
+            tapFunc: () {
+              print('You Click2  ==>> ${shopeeDocnoModels[0].PACKIMG2}');
+            }, urlPathImage: shopeeDocnoModels[0].PACKIMG2,
+          ),
+          ButtonTakePhoto(
+            tapFunc: () {
+              print('You Click3  ==>> ${shopeeDocnoModels[0].PACKIMG3}');
+            }, urlPathImage: shopeeDocnoModels[0].PACKIMG3,
+          ),
+          ButtonTakePhoto(
+            tapFunc: () {
+              print('You Click4  ==>> ${shopeeDocnoModels[0].PACKIMG4}');
+            }, urlPathImage: shopeeDocnoModels[0].PACKIMG4,
           ),
         ],
       );
