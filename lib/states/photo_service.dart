@@ -8,6 +8,7 @@ import 'package:qrscan/qrscan.dart';
 import 'package:ungphoto/models/shopee_docno_model.dart';
 import 'package:ungphoto/utility/my_constant.dart';
 import 'package:ungphoto/utility/my_dialog.dart';
+import 'package:ungphoto/widgets/alert_content.dart';
 import 'package:ungphoto/widgets/button_take_photo.dart';
 import 'package:ungphoto/widgets/show_image.dart';
 import 'package:ungphoto/widgets/show_title.dart';
@@ -148,40 +149,35 @@ class _PhotoServiceState extends State<PhotoService> {
           ButtonTakePhoto(
             tapFunc: () {
               print('You Click1 ==>> ${shopeeDocnoModels[0].PACKIMG1}');
-            }, urlPathImage: shopeeDocnoModels[0].PACKIMG1,
+              imageDialog(0, '${textEditingController.text}_1', shopeeDocnoModels[0].PACKIMG1);
+            },
+            urlPathImage: shopeeDocnoModels[0].PACKIMG1,
           ),
           ButtonTakePhoto(
             tapFunc: () {
               print('You Click2  ==>> ${shopeeDocnoModels[0].PACKIMG2}');
-            }, urlPathImage: shopeeDocnoModels[0].PACKIMG2,
+              imageDialog(1, '${textEditingController.text}_2', shopeeDocnoModels[0].PACKIMG2);
+            },
+            urlPathImage: shopeeDocnoModels[0].PACKIMG2,
           ),
           ButtonTakePhoto(
             tapFunc: () {
               print('You Click3  ==>> ${shopeeDocnoModels[0].PACKIMG3}');
-            }, urlPathImage: shopeeDocnoModels[0].PACKIMG3,
+              imageDialog(2, '${textEditingController.text}_3', shopeeDocnoModels[0].PACKIMG3);
+            },
+            urlPathImage: shopeeDocnoModels[0].PACKIMG3,
           ),
           ButtonTakePhoto(
             tapFunc: () {
               print('You Click4  ==>> ${shopeeDocnoModels[0].PACKIMG4}');
-            }, urlPathImage: shopeeDocnoModels[0].PACKIMG4,
+              imageDialog(3, '${textEditingController.text}_4', shopeeDocnoModels[0].PACKIMG4);
+            },
+            urlPathImage: shopeeDocnoModels[0].PACKIMG4,
           ),
         ],
       );
 
-  Padding controlImage() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          buildImage(0, shopeeDocnoModels[0].PACKIMG1),
-          buildImage(1, shopeeDocnoModels[0].PACKIMG2),
-          buildImage(2, shopeeDocnoModels[0].PACKIMG3),
-          buildImage(3, shopeeDocnoModels[0].PACKIMG4),
-        ],
-      ),
-    );
-  }
+  
 
   Future<Null> processTakePhoto(ImageSource source, int index) async {
     try {
@@ -197,7 +193,7 @@ class _PhotoServiceState extends State<PhotoService> {
     } catch (e) {}
   }
 
-  Future<Null> imageDialog(int index, String packimg) async {
+  Future<Null> imageDialog(int index, String packimg, String currentPackimg) async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -209,32 +205,11 @@ class _PhotoServiceState extends State<PhotoService> {
           ),
           subtitle: ShowTitle(title: 'กรุณา เลือกแหล่งกำเหนิดภาพ ด้วยคะ'),
         ),
-        content: files[index] == null
-            ? packimg.isNotEmpty
-                ? Image.network('${MyConstant.domainImage}$packimg')
-                : SizedBox()
-            : Stack(
-                children: [
-                  Image.file(files[index]!),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Card(
-                      color: Colors.white.withOpacity(0.5),
-                      child: IconButton(
-                        onPressed: () {
-                          processUploadImage(index);
-                        }, // end Func
-                        icon: Icon(
-                          Icons.cloud_upload_outlined,
-                          size: 36,
-                          color: Colors.purple,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+        content: AlertContent(
+         
+           currentPackimg: currentPackimg,
+         
+        ),
         actions: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -242,14 +217,14 @@ class _PhotoServiceState extends State<PhotoService> {
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  processTakePhoto(ImageSource.camera, index);
+                  // processTakePhoto(ImageSource.camera, index);
                 },
                 child: Text('ถ่ายรูป'),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  processTakePhoto(ImageSource.gallery, index);
+                  // processTakePhoto(ImageSource.gallery, index);
                 },
                 child: Text('รูปในเครื่อง'),
               ),
@@ -319,31 +294,6 @@ class _PhotoServiceState extends State<PhotoService> {
       MyDialog().normalDialog(context,
           title: 'Have Problem ?', message: 'Wait few minus Please try again');
     }
-  }
-
-  Container buildImage(int index, String packimg) {
-    print('@@ image$index ==>>> $packimg');
-    return Container(
-      width: 48,
-      height: 48,
-      child: GestureDetector(
-        onTap: () {
-          print('#### index => $index');
-          imageDialog(index, packimg);
-        },
-        child: packimg.isNotEmpty
-            ? Image.network(
-                '${MyConstant.domainImage}$packimg',
-                fit: BoxFit.cover,
-              )
-            : files[index] == null
-                ? ShowImage(path: MyConstant.icon)
-                : Image.file(
-                    files[index]!,
-                    fit: BoxFit.cover,
-                  ),
-      ),
-    );
   }
 
   Widget buildListOrder() {
