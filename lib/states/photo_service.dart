@@ -149,51 +149,57 @@ class _PhotoServiceState extends State<PhotoService> {
           ButtonTakePhoto(
             tapFunc: () {
               print('You Click1 ==>> ${shopeeDocnoModels[0].PACKIMG1}');
-              imageDialog(0, '${textEditingController.text}_1', shopeeDocnoModels[0].PACKIMG1);
+              imageDialog(0, '${textEditingController.text}_1',
+                  shopeeDocnoModels[0].PACKIMG1);
             },
             urlPathImage: shopeeDocnoModels[0].PACKIMG1,
           ),
           ButtonTakePhoto(
             tapFunc: () {
               print('You Click2  ==>> ${shopeeDocnoModels[0].PACKIMG2}');
-              imageDialog(1, '${textEditingController.text}_2', shopeeDocnoModels[0].PACKIMG2);
+              imageDialog(1, '${textEditingController.text}_2',
+                  shopeeDocnoModels[0].PACKIMG2);
             },
             urlPathImage: shopeeDocnoModels[0].PACKIMG2,
           ),
           ButtonTakePhoto(
             tapFunc: () {
               print('You Click3  ==>> ${shopeeDocnoModels[0].PACKIMG3}');
-              imageDialog(2, '${textEditingController.text}_3', shopeeDocnoModels[0].PACKIMG3);
+              imageDialog(2, '${textEditingController.text}_3',
+                  shopeeDocnoModels[0].PACKIMG3);
             },
             urlPathImage: shopeeDocnoModels[0].PACKIMG3,
           ),
           ButtonTakePhoto(
             tapFunc: () {
               print('You Click4  ==>> ${shopeeDocnoModels[0].PACKIMG4}');
-              imageDialog(3, '${textEditingController.text}_4', shopeeDocnoModels[0].PACKIMG4);
+              imageDialog(3, '${textEditingController.text}_4',
+                  shopeeDocnoModels[0].PACKIMG4);
             },
             urlPathImage: shopeeDocnoModels[0].PACKIMG4,
           ),
         ],
       );
 
-  
-
   Future<Null> processTakePhoto(ImageSource source, int index) async {
     try {
+      print('From Image index ==> $index');
+
       var result = await ImagePicker().pickImage(
         source: source,
         maxWidth: 800,
         maxHeight: 800,
       );
-      setState(() {
-        files[index] = File(result!.path);
-      });
-      // processUploadImage(index);
+
+      File file = File(result!.path);
+
+      processUploadImage(index, file);
+
     } catch (e) {}
   }
 
-  Future<Null> imageDialog(int index, String packimg, String currentPackimg) async {
+  Future<Null> imageDialog(
+      int index, String packimg, String currentPackimg) async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -206,9 +212,7 @@ class _PhotoServiceState extends State<PhotoService> {
           subtitle: ShowTitle(title: 'กรุณา เลือกแหล่งกำเหนิดภาพ ด้วยคะ'),
         ),
         content: AlertContent(
-         
-           currentPackimg: currentPackimg,
-         
+          currentPackimg: currentPackimg,
         ),
         actions: [
           Row(
@@ -217,14 +221,14 @@ class _PhotoServiceState extends State<PhotoService> {
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  // processTakePhoto(ImageSource.camera, index);
+                  processTakePhoto(ImageSource.camera, index);
                 },
                 child: Text('ถ่ายรูป'),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  // processTakePhoto(ImageSource.gallery, index);
+                  processTakePhoto(ImageSource.gallery, index);
                 },
                 child: Text('รูปในเครื่อง'),
               ),
@@ -239,7 +243,7 @@ class _PhotoServiceState extends State<PhotoService> {
     );
   }
 
-  Future<void> processUploadImage(int index) async {
+  Future<void> processUploadImage(int index, File file) async {
     // Navigator.pop(context);
 
     MyDialog().processDialog(context);
@@ -248,16 +252,14 @@ class _PhotoServiceState extends State<PhotoService> {
 
     try {
       Map<String, dynamic> map = {};
-      map['file'] =
-          await MultipartFile.fromFile(files[index]!.path, filename: nameFile);
+      map['file'] = await MultipartFile.fromFile(file.path, filename: nameFile);
       FormData data = FormData.fromMap(map);
 
       String urlAPi = 'http://210.86.171.110:89/webapi3/api/docfile';
       await Dio().post(urlAPi, data: data).then((value) async {
         print('@@ value ==> $value');
         Navigator.pop(context);
-        Navigator.pop(context);
-
+       
         // process UPdate Database
         var keys = <String>[
           'PACKIMG1',
@@ -285,7 +287,9 @@ class _PhotoServiceState extends State<PhotoService> {
             'http://210.86.171.110:89/webapi3/api/shopeepic?docno=$docno&picnum=$picnum&picname=$picname';
         await Dio().get(apiUpdateImagePackage).then((value) {
           print('@@ Success Update image $picnum');
-          processSearch(docno);
+          setState(() {
+            processSearch(docno);
+          });
         });
       });
     } catch (e) {
@@ -353,6 +357,7 @@ class _PhotoServiceState extends State<PhotoService> {
   }
 
   Future<Null> processSearch(String search) async {
+
     setUpFiles();
 
     if (shopeeDocnoModels.length != 0) {
