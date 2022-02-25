@@ -15,7 +15,6 @@ import 'package:ungphoto/widgets/show_title.dart';
 
 class PhotoService extends StatefulWidget {
   const PhotoService({Key? key}) : super(key: key);
-
   @override
   _PhotoServiceState createState() => _PhotoServiceState();
 }
@@ -51,24 +50,6 @@ class _PhotoServiceState extends State<PhotoService> {
     // textEditingController.text = '2107079712305Q';
     textEditingController.text = '2105109TRN8CH5';
     // textEditingController.text = '211216A228XAFJ';
-
-    var images = listImages.toString();
-    print('images ==> $images');
-
-    setUpFiles();
-  }
-
-  void setUpFiles() {
-    // if (files.isNotEmpty) {
-    //   files.clear();
-    // }
-
-    files.clear();
-    widgets.clear();
-
-    for (var i = 0; i < 4; i++) {
-      files.add(null);
-    }
   }
 
   @override
@@ -95,7 +76,8 @@ class _PhotoServiceState extends State<PhotoService> {
   }
 
   AppBar buildAppName() {
-    return AppBar(
+    return AppBar(backgroundColor: MyConstant.primary,
+      title: Text(MyConstant.appName),
       actions: [
         IconButton(
           onPressed: () => checkCamera(),
@@ -194,7 +176,6 @@ class _PhotoServiceState extends State<PhotoService> {
       File file = File(result!.path);
 
       processUploadImage(index, file);
-
     } catch (e) {}
   }
 
@@ -259,7 +240,7 @@ class _PhotoServiceState extends State<PhotoService> {
       await Dio().post(urlAPi, data: data).then((value) async {
         print('@@ value ==> $value');
         Navigator.pop(context);
-       
+
         // process UPdate Database
         var keys = <String>[
           'PACKIMG1',
@@ -357,9 +338,6 @@ class _PhotoServiceState extends State<PhotoService> {
   }
 
   Future<Null> processSearch(String search) async {
-
-    setUpFiles();
-
     if (shopeeDocnoModels.length != 0) {
       shopeeDocnoModels.clear();
       widgets.clear();

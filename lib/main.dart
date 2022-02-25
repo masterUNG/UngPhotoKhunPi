@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:ungphoto/states/photo_service.dart';
 import 'package:ungphoto/utility/my_constant.dart';
@@ -8,12 +10,10 @@ final Map<String, WidgetBuilder> map = {
 
 String? firstState;
 
-void main() {
+Future<void> main() async {
+  HttpOverrides.global = MyHttpOverrides();
   firstState = MyConstant.routePhotoService;
   runApp(MyApp());
-
-  
-
 }
 
 class MyApp extends StatelessWidget {
@@ -26,5 +26,13 @@ class MyApp extends StatelessWidget {
       routes: map,
       initialRoute: firstState,
     );
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (cert, host, port) => true;
   }
 }
