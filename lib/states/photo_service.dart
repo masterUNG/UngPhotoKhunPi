@@ -76,7 +76,8 @@ class _PhotoServiceState extends State<PhotoService> {
   }
 
   AppBar buildAppName() {
-    return AppBar(backgroundColor: MyConstant.primary,
+    return AppBar(
+      backgroundColor: MyConstant.primary,
       title: Text(MyConstant.appName),
       actions: [
         IconButton(
@@ -344,15 +345,14 @@ class _PhotoServiceState extends State<PhotoService> {
       displayDetailCustomer = false;
     }
 
-    // print('######## processSearch ==> $search');
-
     MyDialog().processDialog(context);
+    
 
     String apiSearch =
         'http://210.86.171.110:89/webapi3/api/shopeedoc?docno=$search';
     await Dio().get(apiSearch).then((value) {
-      // print('#### value ==>> $value');
       Navigator.pop(context);
+
       if (value.toString() == '[]') {
         print('No Data');
         MyDialog().normalDialog(context,
@@ -361,7 +361,7 @@ class _PhotoServiceState extends State<PhotoService> {
       } else {
         for (var map in value.data) {
           ShopeeDocnoModel model = ShopeeDocnoModel.fromMap(map);
-          print('### idCus ==>> ${model.CUSTSHOPEECODE}');
+         
           setState(() {
             displayDetailCustomer = true;
             shopeeDocnoModels.add(model);

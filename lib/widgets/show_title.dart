@@ -12,10 +12,6 @@ class ShowTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TextStyle? myTextStyle = textStyle;
-    // if (myTextStyle == null) {
-    //   myTextStyle = MyConstant().h3normalStyle();
-    // }
     return Text(
       title,
       style: textStyle ?? MyConstant().h3normalStyle(),
