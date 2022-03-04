@@ -21,7 +21,7 @@ class PhotoService extends StatefulWidget {
 
 class _PhotoServiceState extends State<PhotoService> {
   TextEditingController textEditingController = TextEditingController();
-  List<ShopeeDocnoModel> shopeeDocnoModels = [];
+  // List<ShopeeDocnoModel> shopeeDocnoModels = [];
   List<Widget> widgets = [];
   bool displayDetailCustomer = false;
   List<Color> colors = [Colors.grey.shade200, Colors.grey.shade100];
@@ -32,6 +32,8 @@ class _PhotoServiceState extends State<PhotoService> {
 
   // List<String> listUrlImages = [];
   var listImages = [false, false, false, false];
+
+  ShopeeDocnoModel? shopeeDocnoModel;
 
   Future<Null> processScan() async {
     try {
@@ -47,8 +49,8 @@ class _PhotoServiceState extends State<PhotoService> {
   @override
   void initState() {
     super.initState();
-    // textEditingController.text = '2107079712305Q';
-    textEditingController.text = '2105109TRN8CH5';
+    textEditingController.text = '2107079712305Q';
+    // textEditingController.text = '2105109TRN8CH5';
     // textEditingController.text = '211216A228XAFJ';
   }
 
@@ -96,21 +98,15 @@ class _PhotoServiceState extends State<PhotoService> {
           buildHeadTitle('รายละเอียดลูกค้า'),
           buildRow(
               'รหัสลูกค้า :',
-              shopeeDocnoModels.length == 0
+              shopeeDocnoModel == null
                   ? '?'
-                  : shopeeDocnoModels[0].CUSTSHOPEECODE),
-          buildRow(
-              'ชื่อ :',
-              shopeeDocnoModels.length == 0
-                  ? '?'
-                  : shopeeDocnoModels[0].CUSNAME),
-          buildRow(
-              'ที่อยู่ :',
-              shopeeDocnoModels.length == 0
-                  ? '?'
-                  : shopeeDocnoModels[0].CUSADDRESS),
+                  : shopeeDocnoModel!.CUSTSHOPEECODE),
+          buildRow('ชื่อ :',
+              shopeeDocnoModel == null ? '?' : shopeeDocnoModel!.CUSNAME),
+          buildRow('ที่อยู่ :',
+              shopeeDocnoModel == null ? '?' : shopeeDocnoModel!.CUSADDRESS),
           buildRow('เบอร์โทร :',
-              shopeeDocnoModels.length == 0 ? '?' : shopeeDocnoModels[0].PHONE),
+              shopeeDocnoModel == null ? '?' : shopeeDocnoModel!.PHONE),
           // buildHeadTitle('รายการสั่งซื้อ'),
           buildListOrder(),
           buildHeadTitle('รูปถ่าย Package'),
@@ -118,9 +114,9 @@ class _PhotoServiceState extends State<PhotoService> {
           newControlImage(),
           buildRow(
               'น้ำหนักสินค้า :',
-              shopeeDocnoModels.length == 0
+              shopeeDocnoModel == null
                   ? '?'
-                  : '   ${shopeeDocnoModels[0].WEIGHTTOT} Kg'),
+                  : '   ${shopeeDocnoModel!.WEIGHTTOT} Kg'),
         ],
       ),
     );
@@ -131,35 +127,35 @@ class _PhotoServiceState extends State<PhotoService> {
         children: [
           ButtonTakePhoto(
             tapFunc: () {
-              print('You Click1 ==>> ${shopeeDocnoModels[0].PACKIMG1}');
+              print('You Click1 ==>> ${shopeeDocnoModel!.PACKIMG1}');
               imageDialog(0, '${textEditingController.text}_1',
-                  shopeeDocnoModels[0].PACKIMG1);
+                  shopeeDocnoModel!.PACKIMG1);
             },
-            urlPathImage: shopeeDocnoModels[0].PACKIMG1,
+            urlPathImage: shopeeDocnoModel!.PACKIMG1,
           ),
           ButtonTakePhoto(
             tapFunc: () {
-              print('You Click2  ==>> ${shopeeDocnoModels[0].PACKIMG2}');
+              print('You Click2  ==>> ${shopeeDocnoModel!.PACKIMG2}');
               imageDialog(1, '${textEditingController.text}_2',
-                  shopeeDocnoModels[0].PACKIMG2);
+                  shopeeDocnoModel!.PACKIMG2);
             },
-            urlPathImage: shopeeDocnoModels[0].PACKIMG2,
+            urlPathImage: shopeeDocnoModel!.PACKIMG2,
           ),
           ButtonTakePhoto(
             tapFunc: () {
-              print('You Click3  ==>> ${shopeeDocnoModels[0].PACKIMG3}');
+              print('You Click3  ==>> ${shopeeDocnoModel!.PACKIMG3}');
               imageDialog(2, '${textEditingController.text}_3',
-                  shopeeDocnoModels[0].PACKIMG3);
+                  shopeeDocnoModel!.PACKIMG3);
             },
-            urlPathImage: shopeeDocnoModels[0].PACKIMG3,
+            urlPathImage: shopeeDocnoModel!.PACKIMG3,
           ),
           ButtonTakePhoto(
             tapFunc: () {
-              print('You Click4  ==>> ${shopeeDocnoModels[0].PACKIMG4}');
+              print('You Click4  ==>> ${shopeeDocnoModel!.PACKIMG4}');
               imageDialog(3, '${textEditingController.text}_4',
-                  shopeeDocnoModels[0].PACKIMG4);
+                  shopeeDocnoModel!.PACKIMG4);
             },
-            urlPathImage: shopeeDocnoModels[0].PACKIMG4,
+            urlPathImage: shopeeDocnoModel!.PACKIMG4,
           ),
         ],
       );
@@ -339,14 +335,13 @@ class _PhotoServiceState extends State<PhotoService> {
   }
 
   Future<Null> processSearch(String search) async {
-    if (shopeeDocnoModels.length != 0) {
-      shopeeDocnoModels.clear();
+    if (shopeeDocnoModel != null) {
+      shopeeDocnoModel = null;
       widgets.clear();
       displayDetailCustomer = false;
     }
 
     MyDialog().processDialog(context);
-    
 
     String apiSearch =
         'http://210.86.171.110:89/webapi3/api/shopeedoc?docno=$search';
@@ -360,12 +355,11 @@ class _PhotoServiceState extends State<PhotoService> {
             message: 'ไม่มี Bar Code ใน ฐานข้อมูลของเรา');
       } else {
         for (var map in value.data) {
-          ShopeeDocnoModel model = ShopeeDocnoModel.fromMap(map);
-         
+          shopeeDocnoModel = ShopeeDocnoModel.fromMap(map);
+
           setState(() {
             displayDetailCustomer = true;
-            shopeeDocnoModels.add(model);
-            widgets.add(createWidget(model, countColor % 2));
+            widgets.add(createWidget(shopeeDocnoModel!, countColor % 2));
           });
           countColor++;
         }
