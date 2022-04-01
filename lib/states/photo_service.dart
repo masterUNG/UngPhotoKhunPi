@@ -49,9 +49,9 @@ class _PhotoServiceState extends State<PhotoService> {
   @override
   void initState() {
     super.initState();
-    textEditingController.text = '2107079712305Q';
-    // textEditingController.text = '2105109TRN8CH5';
-    // textEditingController.text = '211216A228XAFJ';
+    textEditingController.text = '220331CC0TEHMY'; // Can Edit
+    // textEditingController.text = '2203309WXND4FX';  // for Cancel
+    // textEditingController.text = '2203296RTQR581'; // For Final Doc
   }
 
   @override
@@ -96,6 +96,7 @@ class _PhotoServiceState extends State<PhotoService> {
       child: Column(
         children: [
           buildHeadTitle('รายละเอียดลูกค้า'),
+          buildRow('Date', cutWordDate(shopeeDocnoModel!.DOCDATE)),
           buildRow(
               'รหัสลูกค้า :',
               shopeeDocnoModel == null
@@ -109,16 +110,24 @@ class _PhotoServiceState extends State<PhotoService> {
               shopeeDocnoModel == null ? '?' : shopeeDocnoModel!.PHONE),
           // buildHeadTitle('รายการสั่งซื้อ'),
           buildListOrder(),
-          buildHeadTitle('รูปถ่าย Package'),
-          // controlImage(),  นี่คือตัวเก่าที่ ต้อง Alert Dialot ก่อนอัพไป Server
-          newControlImage(),
+          buildListPhoto(),
+          buildHeadTitle('น้ำหนัก :'),
+          buildRow('น้ำหนักสินค้ารวม :', '${shopeeDocnoModel!.WEIGHTTOT} Kg',
+              spFlex: 2),
           buildRow(
-              'น้ำหนักสินค้า :',
-              shopeeDocnoModel == null
-                  ? '?'
-                  : '   ${shopeeDocnoModel!.WEIGHTTOT} Kg'),
+              'น้ำหนักสินค้ารวมแพค :', '${shopeeDocnoModel!.WEIGHTREAL} Kg',
+              spFlex: 2),
         ],
       ),
+    );
+  }
+
+  ExpansionTile buildListPhoto() {
+    return ExpansionTile(
+      title: buildHeadTitle('รูปถ่าย Package :'),
+      children: [
+        newControlImage(),
+      ],
     );
   }
 
@@ -280,10 +289,7 @@ class _PhotoServiceState extends State<PhotoService> {
 
   Widget buildListOrder() {
     return ExpansionTile(
-      title: ShowTitle(
-        title: 'รายการสั่งซื้อ',
-        textStyle: MyConstant().h2BlueStyle(),
-      ),
+      title: buildHeadTitle('รายการสั่งซื้อ :'),
       children: widgets,
     );
   }
@@ -303,11 +309,12 @@ class _PhotoServiceState extends State<PhotoService> {
     );
   }
 
-  Row buildRow(String head, String value) {
+  Row buildRow(String head, String value, {int? spFlex}) {
     return Row(
       children: [
         Expanded(
-          flex: 1,
+          // flex: spFlex == null ? 1 : spFlex ,
+          flex: spFlex ?? 1,
           child: ShowTitle(
             title: head,
             textStyle: MyConstant().h3Style(),
@@ -452,7 +459,7 @@ class _PhotoServiceState extends State<PhotoService> {
           ElevatedButton(
             onPressed: () {
               String search = textEditingController.text.trim();
-              print('### search in TextFromField ==> $search');
+              // print('### search in TextFromField ==> $search');
               if (search.isNotEmpty) {
                 processSearch(search);
               } else {
@@ -467,5 +474,10 @@ class _PhotoServiceState extends State<PhotoService> {
         ],
       ),
     );
+  }
+
+  String cutWordDate(String docdate) {
+    var strings = docdate.split(' ');
+    return strings[0];
   }
 }

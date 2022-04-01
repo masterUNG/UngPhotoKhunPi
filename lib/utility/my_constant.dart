@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class MyConstant {
   
 
-  static String appName = 'Ung Check Package';
+  static String appName = 'Check Pic Package';
 
   // for Route
   static String routePhotoService = '/photoService';

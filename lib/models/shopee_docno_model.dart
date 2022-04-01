@@ -30,6 +30,8 @@ class ShopeeDocnoModel {
   final String PACKIMG2;
   final String PACKIMG3;
   final String PACKIMG4;
+  final String WEIGHTREAL;
+  final String DOCFLAG;
   ShopeeDocnoModel({
     required this.NO,
     required this.DOCNO,
@@ -59,6 +61,8 @@ class ShopeeDocnoModel {
     required this.PACKIMG2,
     required this.PACKIMG3,
     required this.PACKIMG4,
+    required this.WEIGHTREAL,
+    required this.DOCFLAG,
   });
 
   Map<String, dynamic> toMap() {
@@ -91,6 +95,8 @@ class ShopeeDocnoModel {
       'PACKIMG2': PACKIMG2,
       'PACKIMG3': PACKIMG3,
       'PACKIMG4': PACKIMG4,
+      'WEIGHTREAL': WEIGHTREAL,
+      'DOCFLAG': DOCFLAG,
     };
   }
 
@@ -124,8 +130,11 @@ class ShopeeDocnoModel {
       PACKIMG2: (map['PACKIMG2'] ?? '') as String,
       PACKIMG3: (map['PACKIMG3'] ?? '') as String,
       PACKIMG4: (map['PACKIMG4'] ?? '') as String,
+      WEIGHTREAL: (map['WEIGHTREAL'] ?? '') as String,
+      DOCFLAG: (map['DOCFLAG'] ?? '') as String,
     );
   }
 
-  factory ShopeeDocnoModel.fromJson(String source) => ShopeeDocnoModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ShopeeDocnoModel.fromJson(String source) =>
+      ShopeeDocnoModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }
