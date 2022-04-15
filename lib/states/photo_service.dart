@@ -49,9 +49,9 @@ class _PhotoServiceState extends State<PhotoService> {
   @override
   void initState() {
     super.initState();
-    textEditingController.text = '220331CC0TEHMY'; // Can Edit
-    // textEditingController.text = '2203309WXND4FX';  // for Cancel
-    // textEditingController.text = '2203296RTQR581'; // For Final Doc
+    // textEditingController.text = '220331CC0TEHMY'; // DocFlag ==> 1
+    textEditingController.text = '220415M54RS0AB';  // DocFlag ==> 0
+    // textEditingController.text = '2204070C71FXB0'; //DocFlag ==> 2
   }
 
   @override
@@ -112,11 +112,37 @@ class _PhotoServiceState extends State<PhotoService> {
           buildListOrder(),
           buildListPhoto(),
           buildHeadTitle('น้ำหนัก :'),
-          buildRow('น้ำหนักสินค้ารวม :', '${shopeeDocnoModel!.WEIGHTTOT} Kg',
-              spFlex: 2),
           buildRow(
-              'น้ำหนักสินค้ารวมแพค :', '${shopeeDocnoModel!.WEIGHTREAL} Kg',
-              spFlex: 2),
+            'น้ำหนักสินค้ารวม :',
+            '${shopeeDocnoModel!.WEIGHTTOT} Kg',
+            spFlex: 3,
+          ),
+          buildRow(
+            'น้ำหนักสินค้ารวมแพค :',
+            '${shopeeDocnoModel!.WEIGHTREAL} Kg',
+            spFlex: 3,
+            pressBol: true,
+            pressFunc: () {
+              print('You Press Edit ==>> ${shopeeDocnoModel!.DOCFLAG}');
+              int docFlagInt = int.parse(shopeeDocnoModel!.DOCFLAG.trim());
+              switch (docFlagInt) {
+                case 0:
+                  print('process Edit Weight');
+                  break;
+                case 1:
+                  MyDialog().normalDialog(context,
+                      title: 'ไม่สามารถแก้ไขได้ ?',
+                      message: 'เอกสารอ้างอิง ทำใบขายแล้ว');
+                  break;
+                case 2:
+                  MyDialog().normalDialog(context,
+                      title: 'ไม่สามารถแก้ไข้ได้ ?',
+                      message: 'เอกสาร ยกเลิกแล้ว');
+                  break;
+                default:
+              }
+            },
+          ),
         ],
       ),
     );
@@ -309,7 +335,9 @@ class _PhotoServiceState extends State<PhotoService> {
     );
   }
 
-  Row buildRow(String head, String value, {int? spFlex}) {
+  Row buildRow(String head, String value,
+      {int? spFlex, bool? pressBol, Function()? pressFunc}) {
+    bool status = pressBol ?? false;
     return Row(
       children: [
         Expanded(
@@ -321,9 +349,21 @@ class _PhotoServiceState extends State<PhotoService> {
           ),
         ),
         Expanded(
-          flex: 3,
+          flex: status ? 2 : 3,
           child: ShowTitle(title: value),
         ),
+        status
+            ? Expanded(
+                flex: 1,
+                child: IconButton(
+                  onPressed: pressFunc,
+                  icon: Icon(
+                    Icons.edit_outlined,
+                    color: MyConstant.dark,
+                  ),
+                ),
+              )
+            : SizedBox(),
       ],
     );
   }
