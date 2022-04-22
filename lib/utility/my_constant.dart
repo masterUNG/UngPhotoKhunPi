@@ -16,8 +16,8 @@ class MyConstant {
 
   // for Color
   static Color primary = Color(0xff7807a5);
-  static Color dark = Color(0xff450075);
-  static Color light = Color(0xffab46d7);
+  static Color dark = Color.fromARGB(255, 56, 2, 95);
+  static Color light = Color.fromARGB(255, 177, 99, 211);
 
   // for Style
   TextStyle h1Style() => TextStyle(
@@ -54,5 +54,11 @@ class MyConstant {
         fontSize: 14,
         fontWeight: FontWeight.normal,
         color: dark,
+      );
+
+       TextStyle h3normalButtonStyle() => TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: Color.fromARGB(255, 21, 74, 118),
       );
 }

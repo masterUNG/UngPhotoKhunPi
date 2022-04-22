@@ -33,6 +33,8 @@ class _PhotoServiceState extends State<PhotoService> {
   // List<String> listUrlImages = [];
   var listImages = [false, false, false, false];
 
+  String? totalWeight;
+
   ShopeeDocnoModel? shopeeDocnoModel;
 
   Future<Null> processScan() async {
@@ -49,8 +51,8 @@ class _PhotoServiceState extends State<PhotoService> {
   @override
   void initState() {
     super.initState();
-    // textEditingController.text = '220331CC0TEHMY'; // DocFlag ==> 1
-    textEditingController.text = '220415M54RS0AB';  // DocFlag ==> 0
+    textEditingController.text = '2204228SBUBJWP'; // DocFlag ==> 0
+    // textEditingController.text = '220415M54RS0AB';  // DocFlag ==> 1
     // textEditingController.text = '2204070C71FXB0'; //DocFlag ==> 2
   }
 
@@ -128,6 +130,9 @@ class _PhotoServiceState extends State<PhotoService> {
               switch (docFlagInt) {
                 case 0:
                   print('process Edit Weight');
+                  processEditWeight(
+                      currentWeight: shopeeDocnoModel!.WEIGHTREAL
+                      );
                   break;
                 case 1:
                   MyDialog().normalDialog(context,
@@ -519,5 +524,54 @@ class _PhotoServiceState extends State<PhotoService> {
   String cutWordDate(String docdate) {
     var strings = docdate.split(' ');
     return strings[0];
+  }
+
+  Future<void> processEditWeight({required String currentWeight}) async {
+    TextEditingController controller = TextEditingController();
+    if (currentWeight != '0.00') {
+  controller.text = currentWeight;
+}
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: ListTile(
+          leading: ShowImage(path: 'images/image2.png'),
+          title: ShowTitle(
+            title: 'น้ำหนักรวมแพค',
+            textStyle: MyConstant().h2BlueStyle(),
+          ),
+          subtitle: ShowTitle(title: 'กรุณากรอก น้ำหนัก หน่วยเป็น กิโลกรัม'),
+        ),
+        content: TextFormField(controller: controller,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(
+            label: ShowTitle(title: 'น้ำหนักรวมแพค'),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: MyConstant.dark, width: 2),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: MyConstant.light),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: ShowTitle(
+              title: 'Save',
+              textStyle: MyConstant().h3normalButtonStyle(),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: ShowTitle(
+              title: 'Cancel',
+              textStyle: MyConstant().h3normalButtonStyle(),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
