@@ -4,9 +4,11 @@ import 'package:ungphoto/widgets/show_image.dart';
 import 'package:ungphoto/widgets/show_title.dart';
 
 class MyDialog {
-
   Future<Null> normalDialog(BuildContext context,
-      {required String title, required String message}) async {
+      {required String title,
+      required String message,
+      String? label,
+      Function()? pressFunc}) async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -14,9 +16,20 @@ class MyDialog {
           leading: ShowImage(
             path: MyConstant.image1,
           ),
-          title: ShowTitle(title: title, textStyle: MyConstant().h2Style(),),
+          title: ShowTitle(
+            title: title,
+            textStyle: MyConstant().h2Style(),
+          ),
           subtitle: ShowTitle(title: message),
         ),
+        actions: [
+          TextButton(
+              onPressed: pressFunc ??
+                  () {
+                    Navigator.pop(context);
+                  },
+              child: ShowTitle(title: label ?? 'OK'))
+        ],
       ),
     );
   }
