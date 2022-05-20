@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -53,7 +52,7 @@ class _PhotoServiceState extends State<PhotoService> {
   @override
   void initState() {
     super.initState();
-    textEditingController.text = '2205121BPPF768'; // DocFlag ==> 0
+    // textEditingController.text = '220519KBVJQRUR'; // DocFlag ==> 0
     // textEditingController.text = '220415M54RS0AB';  // DocFlag ==> 1
     // textEditingController.text = '2204070C71FXB0'; //DocFlag ==> 2
   }
@@ -128,7 +127,13 @@ class _PhotoServiceState extends State<PhotoService> {
             pressBol: true,
             pressFunc: () {
               print('You Press Edit ==>> ${shopeeDocnoModel!.DOCFLAG}');
-              int docFlagInt = int.parse(shopeeDocnoModel!.DOCFLAG.trim());
+
+              int docFlagInt = 0;
+
+              if (shopeeDocnoModel!.DOCFLAG.isNotEmpty) {
+                docFlagInt = int.parse(shopeeDocnoModel!.DOCFLAG.trim());
+              }
+
               switch (docFlagInt) {
                 case 0:
                   print('process Edit Weight');
@@ -410,6 +415,8 @@ class _PhotoServiceState extends State<PhotoService> {
         for (var map in value.data) {
           shopeeDocnoModel = ShopeeDocnoModel.fromMap(map);
 
+          print('DOCFLAG ==>> ${shopeeDocnoModel!.DOCFLAG}');
+
           setState(() {
             displayDetailCustomer = true;
             widgets.add(createWidget(shopeeDocnoModel!, countColor % 2));
@@ -605,6 +612,12 @@ class _PhotoServiceState extends State<PhotoService> {
       totalWeight = numberFormat.format(totalDou);
 
       print('totalWeight format แล้ว ===> $totalWeight');
+
+      String urlAPI =
+          'http://210.86.171.110:89/webapi3/api/shopeesavepack?docno=${shopeeDocnoModel!.DOCNO}&packweight=$totalWeight';
+      await Dio().get(urlAPI).then((value) {
+        processSearch(textEditingController.text);
+      });
     }
   }
 }
