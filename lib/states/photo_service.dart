@@ -52,8 +52,8 @@ class _PhotoServiceState extends State<PhotoService> {
   @override
   void initState() {
     super.initState();
-    // textEditingController.text = '220519KBVJQRUR'; // DocFlag ==> 0
-    // textEditingController.text = '220415M54RS0AB';  // DocFlag ==> 1
+    textEditingController.text = '2205278EJ1UVN6'; // DocFlag ==> 0
+    // textEditingController.text = '220519KBVJQRUR';  // DocFlag ==> 1 ทำใบขายไปแล้ว
     // textEditingController.text = '2204070C71FXB0'; //DocFlag ==> 2
   }
 
@@ -132,6 +132,8 @@ class _PhotoServiceState extends State<PhotoService> {
 
               if (shopeeDocnoModel!.DOCFLAG.isNotEmpty) {
                 docFlagInt = int.parse(shopeeDocnoModel!.DOCFLAG.trim());
+              } else {
+                // DoCFlAG ==> ''
               }
 
               switch (docFlagInt) {
@@ -604,20 +606,37 @@ class _PhotoServiceState extends State<PhotoService> {
         message: 'กรุณากรองน้ำหนัก ด้วยคะ',
         label: 'กรอกน้ำหนัก',
       );
+    } else if (checkTotalWeight()) {
+      processSaveNewWeight();
     } else {
-      print('totalWeight ดิบ ===> $totalWeight');
-
-      double totalDou = double.parse(totalWeight!);
-      NumberFormat numberFormat = NumberFormat('##.00');
-      totalWeight = numberFormat.format(totalDou);
-
-      print('totalWeight format แล้ว ===> $totalWeight');
-
-      String urlAPI =
-          'http://210.86.171.110:89/webapi3/api/shopeesavepack?docno=${shopeeDocnoModel!.DOCNO}&packweight=$totalWeight';
-      await Dio().get(urlAPI).then((value) {
-        processSearch(textEditingController.text);
-      });
+      MyDialog().normalDialog(context,
+          title: 'มีข้อผิดพลาด', message: 'น้ำหนักรวมแพค น้อยกว่า นำ้หนักรวม');
     }
+  }
+
+  bool checkTotalWeight() {
+    bool result = true; // ค่าของ สินค้ารวมแพคที่ กรอง มากกว่า สินค้ารวม
+
+    double totalDou = double.parse(totalWeight!);
+    double weightTotal = double.parse(shopeeDocnoModel!.WEIGHTTOT);
+    if (weightTotal >= totalDou) {
+      result = false;
+    }
+
+    return result;
+  }
+
+  Future<void> processSaveNewWeight() async {
+    double totalDou = double.parse(totalWeight!);
+    NumberFormat numberFormat = NumberFormat('##.00');
+    totalWeight = numberFormat.format(totalDou);
+
+    print('totalWeight format แล้ว ===> $totalWeight');
+
+    String urlAPI =
+        'http://210.86.171.110:89/webapi3/api/shopeesavepack?docno=${shopeeDocnoModel!.DOCNO}&packweight=$totalWeight';
+    await Dio().get(urlAPI).then((value) {
+      processSearch(textEditingController.text);
+    });
   }
 }
